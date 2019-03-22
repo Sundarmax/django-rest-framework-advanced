@@ -6,7 +6,14 @@ from rest_framework.response import Response
 from django.http.response import HttpResponseNotAllowed
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter,OrderingFilter
-
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import ( 
+    AllowAny,
+    IsAuthenticatedOrReadOnly,
+    IsAdminUser,
+    DjangoModelPermissions,
+    DjangoModelPermissionsOrAnonReadOnly
+    ) 
 #return the Active users 
 #override the default behaviours with 4 Methods. 
 #creating custom Actions
@@ -18,6 +25,7 @@ class CustomerViewset(viewsets.ModelViewSet):
     search_fields = ('name','address', )
     ordering_fields =('id', 'name','address', )
     ordering =('id' )
+    authentication_classes = [TokenAuthentication,]
     # search_fields = ('=name','=address', )Exact String search 
     # lookup_field = ('name') #but this field should be uniq
     def get_queryset(self):
@@ -124,10 +132,20 @@ class ProfessionViewset(viewsets.ModelViewSet):
     queryset            = Profession.objects.all()
     serializer_class    = ProfessionSerializer
 
+    authentication_classes = [TokenAuthentication,]
+    permission_classes = [IsAdminUser, ]
+
 class DatasheetViewset(viewsets.ModelViewSet):
+    
     queryset            = DataSheet.objects.all()
     serializer_class    = DatasheetSerializer
+    permission_classes = [AllowAny, ]
 
 class DocumentViewset(viewsets.ModelViewSet):
+
     queryset            = Document.objects.all()
     serializer_class    = DocumentSerializer
+
+    authentication_classes = [TokenAuthentication,]
+    permission_classes  = [DjangoModelPermissionsOrAnonReadOnly,  ]
+    #permission_classes = [IsAuthenticatedOrReadOnly , ]

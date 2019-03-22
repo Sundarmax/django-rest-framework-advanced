@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url,include
 from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
 from core.views import *
 
 
@@ -17,5 +18,6 @@ router.register(r'documents',DocumentViewset)
 urlpatterns = [
     path('api/',include(router.urls)),
     path('admin/', admin.site.urls),
-    url(r'^api-auth/',include('rest_framework.urls'))
+    url('api-token-auth/',obtain_auth_token),
+    url('api-auth/',include('rest_framework.urls'))
 ]
