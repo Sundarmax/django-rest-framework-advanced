@@ -5,13 +5,21 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.http.response import HttpResponseNotAllowed
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter,OrderingFilter
+
 #return the Active users 
 #override the default behaviours with 4 Methods. 
 #creating custom Actions
 class CustomerViewset(viewsets.ModelViewSet):
     #queryset            = Customer.objects.all()
-    serializer_class    = CustomerSerializer
+    filter_backends  = (SearchFilter, OrderingFilter)
+    serializer_class = CustomerSerializer
     filter_fields =('name', )
+    search_fields = ('name','address', )
+    ordering_fields =('id', 'name','address', )
+    ordering =('id' )
+    # search_fields = ('=name','=address', )Exact String search 
+    # lookup_field = ('name') #but this field should be uniq
     def get_queryset(self):
         address = self.request.query_params.get('address',None)
         if address:
